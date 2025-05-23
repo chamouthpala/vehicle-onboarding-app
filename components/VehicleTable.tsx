@@ -1,5 +1,6 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 interface Vehicle {
   id: number;
@@ -17,10 +18,15 @@ interface VehiclesViewWizardProps {
 }
 
 const VehiclesViewWizard: React.FC<VehiclesViewWizardProps> = ({ vehicles }) => {
+  const navigation = useNavigation();
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {vehicles.map((vehicle) => (
-        <View key={vehicle.id} style={styles.vehicleCard}>
+        <TouchableOpacity
+          key={vehicle.id}
+          style={styles.vehicleCard}
+          onPress={() => navigation.navigate('VehicleDetailsWizard', { vehicle })}
+        >
           <Text style={styles.title}>{vehicle.make} {vehicle.model}</Text>
           <Text>Reg No: {vehicle.regnum}</Text>
           <Text>Year: {vehicle.year}</Text>
@@ -31,7 +37,7 @@ const VehiclesViewWizard: React.FC<VehiclesViewWizardProps> = ({ vehicles }) => 
               <Image key={index} source={{ uri: url }} style={styles.image} />
             ))}
           </ScrollView>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );

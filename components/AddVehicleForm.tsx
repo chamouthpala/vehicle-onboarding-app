@@ -4,10 +4,12 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const VehicleOnboardingWizard = () => {
   const [formData, setFormData] = useState({
-    regnum: '',
+     regnum: '',
     make: '',
     model: '',
     year: '',
+    vehicletype: '',
+    fuelType: '',
     images: [] as string[],
   });
 
@@ -28,11 +30,45 @@ const VehicleOnboardingWizard = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // 
+ const handleSubmit = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/api/vehicles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        make: formData.make,
+        model: formData.model,
+        year: parseInt(formData.year),
+        regnum: formData.regnum,
+        vehicletype: formData.vehicletype,
+        fuelType: formData.fuelType,
+        imageUrls: formData.images,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit vehicle');
+    }
+
     Alert.alert('Success', 'Vehicle registered successfully!');
-    console.log(formData);
-  };
+    console.log('Submitted:', formData);
+
+    setFormData({
+      regnum: '',
+      make: '',
+      model: '',
+      year: '',
+      vehicletype: '',
+      fuelType: '',
+      images: [],
+    });
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Error', 'Failed to submit vehicle data.');
+  }
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -62,6 +98,18 @@ const VehicleOnboardingWizard = () => {
         style={styles.input}
         value={formData.year}
         onChangeText={(text) => handleChange('year', text)}
+      />
+      <TextInput
+        placeholder="Vehicle Type"
+        style={styles.input}
+        value={formData.vehicletype}
+        onChangeText={(text) => handleChange('vehicletype', text)}
+      />
+      <TextInput
+        placeholder="Fuel Type"
+        style={styles.input}
+        value={formData.fuelType}
+        onChangeText={(text) => handleChange('fuelType', text)}
       />
 
     

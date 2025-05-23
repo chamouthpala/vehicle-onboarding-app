@@ -14,24 +14,28 @@ interface Vehicle {
 }
 
 export default function ViewVehicles() {
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('http://localhost:8080/api/vehicles')
-      .then((res) => res.json())
-      .then((data) => {
-        setVehicles(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching vehicles:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+useEffect(() => {
+  const fetchVehicles = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/vehicles');
+      const data: Vehicle[] = await res.json();
 
-  
+      // Optional: Validate shape if needed
+      console.log('Fetched vehicles:', data);
+      setVehicles(data);
+    } catch (error) {
+      console.error('Error fetching vehicles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchVehicles();
+}, []);
+
   return (
       <ScrollView>
         <ThemedView style={{ padding: 20 }}>
